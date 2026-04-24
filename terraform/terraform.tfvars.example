@@ -1,0 +1,10 @@
+project_id  = "write2style"
+region      = "europe-west1"
+github_repo = "Toluwalemi/write2style"
+
+clerk_jwks_url = "https://YOUR-INSTANCE.clerk.accounts.dev/.well-known/jwks.json"
+clerk_issuer   = "https://YOUR-INSTANCE.clerk.accounts.dev"
+
+openai_api_key     = "sk-..."
+openrouter_api_key = "sk-or-..."
+pinecone_api_key   = "pcsk-..."
