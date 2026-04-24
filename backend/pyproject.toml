@@ -1,0 +1,22 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "venv"]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "B",   # bugbear
+  "UP",  # pyupgrade
+  "SIM", # flake8-simplify
+  "W",   # pycodestyle warnings
+]
+ignore = [
+  "E501", # handled by formatter
+  "B008", # allow FastAPI Depends() in defaults
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
