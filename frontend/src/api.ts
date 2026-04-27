@@ -26,10 +26,29 @@ async function authed(getToken: GetToken, path: string, init: RequestInit = {}):
   const token = await getToken();
   const headers = new Headers(init.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch(`${API_URL}${path}`, { ...init, headers });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...init, headers });
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error(
+        `Could not reach the server at ${API_URL}. Is the backend running?`
+      );
+    }
+    throw err;
+  }
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`${res.status} ${res.statusText}: ${text}`);
+    let message = `${res.status} ${res.statusText}`;
+    if (text) {
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed.error) message = parsed.error;
+      } catch {
+        message = `${message}: ${text}`;
+      }
+    }
+    throw new Error(message);
   }
   return res;
 }
