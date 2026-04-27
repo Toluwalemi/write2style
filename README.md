@@ -35,7 +35,7 @@ upload → extract text → chunk → embed → Pinecone upsert
 prompt → embed → Pinecone top-k → inject DNA + few-shot → stream draft
 ```
 
-Two models, by design: **Claude 3.5 Sonnet** for Style DNA extraction (heavier reasoning, infrequent), **Claude 3.5 Haiku** for drafting (cheaper, lower latency, runs on every request).
+Two models, by design: **Claude Sonnet 4.5** for Style DNA extraction (heavier reasoning, infrequent), **Claude Haiku 4.5** for drafting (cheaper, lower latency, runs on every request).
 
 ---
 
@@ -86,7 +86,7 @@ npm run dev                      # serves on http://localhost:5173
 | Frontend | React + TypeScript + Vite | Fast dev loop; static-asset deploy fits Cloud Run nicely |
 | Backend | FastAPI | First-class async, pydantic validation, excellent OpenAPI |
 | Auth | Clerk | JWT verification only on the backend; no session state to manage |
-| LLM | OpenRouter (Claude Sonnet / Haiku) | One API for two models, cheap fallbacks, no per-provider auth |
+| LLM | OpenRouter (Claude Sonnet 4.5 / Haiku 4.5) | One API for two models, cheap fallbacks, no per-provider auth |
 | Embeddings | OpenAI `text-embedding-3-small` (1536-dim) | Strong quality at low cost; matches Pinecone's serverless tier |
 | Vector DB | Pinecone Serverless | Per-persona namespaces, scales to zero, free tier covers MVP |
 | Object storage | GCS | Raw uploads (PDF/MD/TXT) before extraction |

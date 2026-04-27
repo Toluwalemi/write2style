@@ -30,12 +30,12 @@ variable "docker_image_tag" {
 
 variable "style_model" {
   type    = string
-  default = "anthropic/claude-3.5-sonnet"
+  default = "anthropic/claude-sonnet-4.5"
 }
 
 variable "draft_model" {
   type    = string
-  default = "anthropic/claude-3.5-haiku"
+  default = "anthropic/claude-haiku-4.5"
 }
 
 variable "pinecone_index" {

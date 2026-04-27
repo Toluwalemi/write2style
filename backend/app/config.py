@@ -20,8 +20,8 @@ class Settings(BaseSettings):
 
     embedding_model: str = "text-embedding-3-small"
     embedding_dim: int = 1536
-    style_model: str = "anthropic/claude-3.5-sonnet"
-    draft_model: str = "anthropic/claude-3.5-haiku"
+    style_model: str = "anthropic/claude-sonnet-4.5"
+    draft_model: str = "anthropic/claude-haiku-4.5"
 
     chunk_size: int = 800
     chunk_overlap: int = 100
