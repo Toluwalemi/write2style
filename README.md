@@ -79,18 +79,12 @@ cp .env.example .env             # set VITE_CLERK_PUBLISHABLE_KEY + VITE_API_URL
 npm run dev                      # serves on http://localhost:5173
 ```
 
-### Deploy to GCP
-
-Full setup (one-time GCP/Clerk/Pinecone/OpenAI/OpenRouter onboarding + Terraform bootstrap) is documented in [`setup.md`](./setup.md). After that, every push to `main` under `backend/` or `frontend/` auto-deploys via GitHub Actions.
-
----
-
 ## Tech stack
 
 | Layer | Choice | Why |
 |---|---|---|
 | Frontend | React + TypeScript + Vite | Fast dev loop; static-asset deploy fits Cloud Run nicely |
-| Backend | FastAPI + Python 3.12 | First-class async, pydantic validation, excellent OpenAPI |
+| Backend | FastAPI | First-class async, pydantic validation, excellent OpenAPI |
 | Auth | Clerk | JWT verification only on the backend; no session state to manage |
 | LLM | OpenRouter (Claude Sonnet / Haiku) | One API for two models, cheap fallbacks, no per-provider auth |
 | Embeddings | OpenAI `text-embedding-3-small` (1536-dim) | Strong quality at low cost; matches Pinecone's serverless tier |
@@ -100,16 +94,6 @@ Full setup (one-time GCP/Clerk/Pinecone/OpenAI/OpenRouter onboarding + Terraform
 | Compute | Cloud Run | Serverless containers, scales to zero, AMD64 |
 | IaC | Terraform | One source of truth for GCP resources, secrets, IAM |
 | CI/CD | GitHub Actions + Workload Identity Federation | No long-lived service-account keys in CI |
-
----
-
-## Engineering practices
-
-- **Structured JSON logging** with per-request IDs, propagated through context vars. Every LLM/Pinecone/GCS call is timed and logged with model, counts, and durations. Cloud Logging picks up the JSON natively.
-- **Stable error envelope**: every failure response is `{"error": ..., "request_id": ...}` with the request ID echoed in the `x-request-id` header.
-- **Exception handlers** for HTTP, validation, and unhandled errors. No raw stack traces leak to clients.
-- **Test suite**: pure-function tests for extraction/chunking/models, smoke tests for the API surface, plus tests for the eval harness components. Run with `pytest -q` from `backend/`.
-- **Pre-commit hooks** (ruff, formatter) run on every commit.
 
 ---
 
@@ -127,8 +111,4 @@ A working pipeline shows `dna_only > baseline` and `dna_rag ≥ dna_only`. Metho
 ---
 
 ## Documentation
-
-- [`prd.md`](./prd.md) — product requirements and design rationale
-- [`setup.md`](./setup.md) — one-time manual setup (GCP, Clerk, Pinecone, Terraform bootstrap)
-- [`DEMO.md`](./DEMO.md) — 90-second guided walkthrough of the running app
 - [`backend/eval/README.md`](./backend/eval/README.md) — evaluation methodology
