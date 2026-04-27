@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -8,6 +9,8 @@ from ..firestore_client import persona_ref, user_personas_ref
 from ..models import Persona, PersonaCreate
 from ..storage import delete_prefix
 from ..vectorstore import delete_namespace
+
+log = logging.getLogger("app.personas")
 
 router = APIRouter(prefix="/api/personas", tags=["personas"])
 
@@ -43,6 +46,7 @@ def create_persona(body: PersonaCreate, user_id: str = Depends(current_user)) ->
             "updated_at": SERVER_TIMESTAMP,
         }
     )
+    log.info("persona_created", extra={"persona_id": persona_id})
     return Persona(id=persona_id, name=body.name, description=body.description)
 
 
@@ -74,3 +78,4 @@ def delete_persona(persona_id: str, user_id: str = Depends(current_user)) -> Non
 
     delete_namespace(persona_id)
     delete_prefix(f"users/{user_id}/personas/{persona_id}/")
+    log.info("persona_deleted", extra={"persona_id": persona_id, "samples_removed": len(samples)})

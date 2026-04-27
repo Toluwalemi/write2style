@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
@@ -12,6 +13,8 @@ from ..llm import refine_style_dna
 from ..models import Sample
 from ..storage import upload_bytes
 from ..vectorstore import upsert_chunks
+
+log = logging.getLogger("app.samples")
 
 router = APIRouter(prefix="/api/personas/{persona_id}/samples", tags=["samples"])
 
@@ -85,6 +88,16 @@ async def upload_sample(
         }
     )
 
+    log.info(
+        "sample_uploaded",
+        extra={
+            "persona_id": persona_id,
+            "sample_id": sample_id,
+            "chunks": len(chunks),
+            "chars": len(text),
+            "bytes": len(data),
+        },
+    )
     return Sample(
         id=sample_id,
         filename=file.filename or "sample",

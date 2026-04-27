@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 
 import jwt
@@ -5,6 +6,9 @@ from fastapi import HTTPException, Request, status
 from jwt import PyJWKClient
 
 from .config import settings
+from .logging_config import user_id_var
+
+log = logging.getLogger("app.auth")
 
 
 @lru_cache(maxsize=1)
@@ -15,6 +19,7 @@ def _jwks_client() -> PyJWKClient:
 def current_user(request: Request) -> str:
     auth_header = request.headers.get("authorization", "")
     if not auth_header.lower().startswith("bearer "):
+        log.warning("auth_missing_bearer")
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Missing bearer token")
 
     token = auth_header.split(" ", 1)[1].strip()
@@ -28,9 +33,12 @@ def current_user(request: Request) -> str:
             options={"verify_aud": False},
         )
     except jwt.PyJWTError as exc:
+        log.warning("auth_invalid_token", extra={"reason": str(exc)})
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, f"Invalid token: {exc}") from exc
 
     user_id = decoded.get("sub")
     if not user_id:
+        log.warning("auth_missing_subject")
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token missing subject")
+    user_id_var.set(user_id)
     return user_id

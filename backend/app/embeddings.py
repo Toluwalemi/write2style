@@ -1,6 +1,11 @@
+import logging
+
 from openai import OpenAI
 
 from .config import settings
+from .logging_config import timed
+
+log = logging.getLogger("app.embeddings")
 
 _client: OpenAI | None = None
 
@@ -15,5 +20,13 @@ def _openai() -> OpenAI:
 def embed(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
-    resp = _openai().embeddings.create(model=settings.embedding_model, input=texts)
+    total_chars = sum(len(t) for t in texts)
+    with timed(
+        log,
+        "embed",
+        model=settings.embedding_model,
+        count=len(texts),
+        total_chars=total_chars,
+    ):
+        resp = _openai().embeddings.create(model=settings.embedding_model, input=texts)
     return [row.embedding for row in resp.data]
