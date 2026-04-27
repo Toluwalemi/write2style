@@ -49,7 +49,7 @@ function Workspace() {
       setPersonas(list);
       return list;
     } catch (err) {
-      setError((err as Error).message);
+      console.warn("listPersonas failed:", err);
       return [];
     }
   }, [token]);
@@ -61,7 +61,7 @@ function Workspace() {
       setActive(fresh);
       setPersonas((prev) => prev.map((p) => (p.id === fresh.id ? fresh : p)));
     } catch (err) {
-      setError((err as Error).message);
+      console.warn("getPersona failed:", err);
     }
   }, [active, token]);
 
