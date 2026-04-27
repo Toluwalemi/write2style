@@ -24,6 +24,25 @@ def _openrouter() -> OpenAI:
     return _client
 
 
+def chat_json(model: str, system: str, user: str, temperature: float = 0.0) -> dict:
+    with timed(log, "chat_json", model=model):
+        resp = _openrouter().chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            temperature=temperature,
+            response_format={"type": "json_object"},
+        )
+    content = resp.choices[0].message.content or "{}"
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        log.warning("chat_json_invalid", extra={"model": model, "content_chars": len(content)})
+        return {"raw": content}
+
+
 def refine_style_dna(current_dna: dict | None, sample_text: str) -> dict:
     truncated = sample_text[: settings.max_sample_chars_for_dna]
     user = STYLE_DNA_REFINE_USER.format(

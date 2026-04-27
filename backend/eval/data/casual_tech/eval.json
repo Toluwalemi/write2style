@@ -1,0 +1,6 @@
+[
+  {
+    "prompt": "Write a short opener (3-5 sentences) for a blog post about debugging memory leaks in long-running services.",
+    "reference": "Memory leaks in long-running services are a slow-motion disaster. The service runs fine for a day, fine for a week, and then OOM-killed at 3am on a Sunday. The graphs always look the same: a slow climb, then a cliff.\n\nThe instinct is to add more memory. Don't. More memory just buys you a longer fuse. The leak is still there; you've just made it harder to spot.\n\nStart by asking what the process is holding on to that it shouldn't be. Heap dumps are unglamorous, but they don't lie."
+  }
+]
